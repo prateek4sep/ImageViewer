@@ -1,0 +1,7 @@
+.header{
+    text-align:left;
+    font-size: 18px;
+    padding: 25px; /* Would align the Logo vertically. */
+    background:#263238;
+    color:#fff;
+}
