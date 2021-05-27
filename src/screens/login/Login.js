@@ -10,6 +10,42 @@ import './Login.css';
 class Login extends Component {
     constructor() {
         super();
+        this.state = {
+            username: "",
+            password: "",
+            usernameRequiredLabel: "hide",
+            passwordRequiredLabel: "hide",
+            invalidLoginLabel: "hide"
+        }
+    }
+
+    usernameChangedHandler = (e) => {
+        this.setState({invalidLoginLabel:"hide"});
+        this.setState({username: e.target.value});
+    }
+
+    passwordChangedHandler = (e) => {
+        this.setState({invalidLoginLabel:"hide"});
+        this.setState({password: e.target.value});
+    }
+
+    loginClickedHandler = () => {
+        let mockUsername = "upgrad";
+        let mockPassword = "upgrad";
+        let accessToken = "Valid Access Token";
+
+        this.state.username === "" ? this.setState({usernameRequiredLabel:"red"}) : this.setState({usernameRequiredLabel:"hide"});
+        this.state.password === "" ? this.setState({passwordRequiredLabel:"red"}) : this.setState({passwordRequiredLabel:"hide"});
+
+        if (this.state.username === mockUsername && this.state.password === mockPassword) {
+            sessionStorage.setItem("access-token", accessToken);
+            this.setState({invalidLoginLabel:"hide"});
+            console.log("Valid Login");
+        } else {
+            if(this.state.username !== "" && this.state.password !== "")
+                this.setState({invalidLoginLabel:"red"});
+        }
+
     }
 
     render() {
@@ -21,21 +57,25 @@ class Login extends Component {
                         <br />
                         <FormControl className="form-control" required>
                             <InputLabel htmlFor="username">Username</InputLabel>
-                            <Input id="username" type="text" />
+                            <Input id="username" type="text" onChange={this.usernameChangedHandler} />
                             <FormHelperText>
-                                <span className="red">required</span>
+                                <span className={this.state.usernameRequiredLabel}>required</span>
                             </FormHelperText>
                         </FormControl>
                         <br /><br />
                         <FormControl className="form-control" required>
                             <InputLabel htmlFor="loginPassword">Password</InputLabel>
-                            <Input id="loginPassword" type="password" />
+                            <Input id="loginPassword" type="password" onChange={this.passwordChangedHandler}  />
                             <FormHelperText>
-                                <span className="red">required</span>
+                                <span className={this.state.passwordRequiredLabel}>required</span>
                             </FormHelperText>
                         </FormControl>
-                        <br /><br /><br />
-                        <Button variant="contained" color="primary">LOGIN</Button>
+                        <br /><br />
+                        <FormHelperText>
+                             <span className={this.state.invalidLoginLabel}>Incorrect username and/or password</span>
+                        </FormHelperText>
+                        <br />
+                        <Button variant="contained" color="primary" onClick={this.loginClickedHandler}>LOGIN</Button>
                     </CardContent>
                 </Card>
             </div>
