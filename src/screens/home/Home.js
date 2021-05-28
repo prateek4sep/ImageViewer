@@ -1,7 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Header from '../../common/Header';
-import { withRouter } from 'react-router-dom';
 import './Home.css'
+import {
+    Avatar,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    CardMedia,
+    Container,
+    Divider,
+    FormControl,
+    Grid,
+    TextField, Typography
+} from '@material-ui/core'
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 class Home extends Component {
     constructor() {
@@ -28,7 +42,7 @@ class Home extends Component {
         let that = this;
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
-                that.setState({ userImages: JSON.parse(this.responseText).data });
+                that.setState({userImages:JSON.parse(this.responseText).data});
             }
         });
 
@@ -42,14 +56,69 @@ class Home extends Component {
         return (
             <div>
                 <div>
-                    <Header {...this.props} loggedIn={true}
-                        dpUrl={this.state.url} showMyAccount={true} />
-                </div>
-                Home Page
+                    <Header {...this.props} loggedIn={true} dpUrl={this.state.url} showMyAccount={true} />
+                    </div>
+                    <Container className='posts-container'>
+                    <Grid container alignContent='center' justify='flex-start' direction='row' spacing={2}>
+                        {
+                            (this.state.userImages || []).map((details, index) => (
+                                <Grid item xs={6} key={details.id+"_img"}>
+                                    <Card key={details.id}>
+                                        <CardHeader
+                                            avatar={<Avatar variant="circle" src={this.state.url} className='avatar' />}
+                                            title={this.state.username}
+                                            subheader={new Date(this.state.timestamp).toLocaleString().replace(",","")} />
+                                        <CardMedia style={{ height: 0, paddingTop: '80%', marginBottom: 10 }} image={this.state.url} />
+                                        <Divider variant="middle" />
+                                        <CardContent>
+                                            <div className='caption'>{details.caption}</div>
+                                            <div className='tags'> {this.state.tags} </div>
+                                            <br />
+                                            <div className='likes'>
+                                                {
+                                                    this.state.likes[index] ?
+                                                        <FavoriteIcon fontSize='default' style={{ color: "red" }} />
+                                                        :
+                                                        <FavoriteBorderIcon fontSize='default' />
+                                                }
+                                                <Typography>
+                                                    <span>&nbsp;{this.state.likes[index] ? 2 + ' likes' : 1 + ' likes'}</span>
+                                                </Typography>
+                                            </div>
+
+                                            <div id='comments-container'>
+                                                {
+                                                    this.state.comments[index] ?
+                                                        (this.state.comments)[index].map((comment, index) => (
+                                                            <p key={index}>
+                                                                <b>{this.state.username}</b> : {comment}
+                                                            </p>
+                                                        ))
+                                                        :
+                                                        <p></p>
+                                                }
+                                            </div>
+
+                                            <div className='post-comment-container'>
+                                                <FormControl className='post-comment-form-control'>
+                                                    <TextField id={'textfield-' + index} label="Add a comment" />
+                                                </FormControl>
+                                                <div className='add-button'>
+                                                    <FormControl>
+                                                        <Button variant='contained' color='primary'>ADD</Button>
+                                                    </FormControl>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                            ))
+                        }
+                    </Grid>
+                </Container>
             </div>
         );
     }
-
 }
 
-export default withRouter(Home);
+export default Home;
