@@ -4,9 +4,10 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import { Card, CardContent, Link, Typography } from '@material-ui/core';
+import { Card, CardContent, Typography } from '@material-ui/core';
 import './Login.css';
 import Header from '../../common/Header';
+import { Redirect } from 'react-router-dom';
 
 class Login extends Component {
     constructor() {
@@ -17,7 +18,7 @@ class Login extends Component {
             usernameRequiredLabel: "hide",
             passwordRequiredLabel: "hide",
             invalidLoginLabel: "hide",
-            userLoggedIn: false
+            loggedIn: sessionStorage.getItem("access-token") == null ? false : true
         }
     }
 
@@ -42,8 +43,7 @@ class Login extends Component {
         if (this.state.username === mockUsername && this.state.password === mockPassword) {
             window.sessionStorage.setItem("access-token", accessToken);
             this.setState({invalidLoginLabel:"hide"});
-            this.setState({userLoggedIn:true});
-            this.props.history.push('/home');
+            this.props.history.push("/home");
         } else {
             if(this.state.username !== "" && this.state.password !== "")
                 this.setState({invalidLoginLabel:"red"});
@@ -52,6 +52,8 @@ class Login extends Component {
     }
 
     render() {
+        if(this.state.loggedIn===true) return <Redirect to="/home" />
+        else
         return (
             <div>
                 <Header {...this.props} loggedIn={false}/>

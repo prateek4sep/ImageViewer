@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import { Redirect } from 'react-router-dom';
 
 class Home extends Component {
     constructor() {
@@ -28,7 +29,8 @@ class Home extends Component {
             timestamp: "2021-05-26T16:01:50+0000",
             tags: "#upgrad #upgradproject #reactjs",
             likes: [],
-            comments: []
+            comments: [],
+            loggedIn: sessionStorage.getItem("access-token") == null ? false : true
         }
     }
 
@@ -52,7 +54,32 @@ class Home extends Component {
         console.log(this.state.userImages);
     }
 
+    likeHandler = (index) => {
+        let likedImages = this.state.likes;
+        likedImages[index] = !likedImages[index];
+        this.setState({'likes': likedImages})
+    }
+
+    commentHandler = (index) => {
+        var textField = document.getElementById("textfield-" + index);
+        if (textField.value == null || textField.value.trim() === "") {
+            return;
+        }
+        let imageComments = this.state.comments;
+        if (imageComments[index] === undefined) {
+            imageComments[index] = [textField.value];
+        } else {
+            imageComments[index] = imageComments[index].concat([textField.value]);
+        }
+
+        textField.value = '';
+
+        this.setState({'comments': imageComments})
+    }
+
     render() {
+        if(this.state.loggedIn===false) return <Redirect to="/" />
+        else
         return (
             <div>
                 <div>
@@ -118,29 +145,6 @@ class Home extends Component {
                 </Container>
             </div>
         );
-    }
-
-    likeHandler = (index) => {
-        let likedImages = this.state.likes;
-        likedImages[index] = !likedImages[index];
-        this.setState({'likes': likedImages})
-    }
-
-    commentHandler = (index) => {
-        var textField = document.getElementById("textfield-" + index);
-        if (textField.value == null || textField.value.trim() === "") {
-            return;
-        }
-        let imageComments = this.state.comments;
-        if (imageComments[index] === undefined) {
-            imageComments[index] = [textField.value];
-        } else {
-            imageComments[index] = imageComments[index].concat([textField.value]);
-        }
-
-        textField.value = '';
-
-        this.setState({'comments': imageComments})
     }
 
 }
