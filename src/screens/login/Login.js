@@ -7,7 +7,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
 import './Login.css';
 import Header from '../../common/Header';
-import { withRouter } from 'react-router-dom';
 
 class Login extends Component {
     constructor() {
@@ -90,4 +89,4 @@ class Login extends Component {
     }
 }
 
-export default withRouter(Login);
+export default Login;
