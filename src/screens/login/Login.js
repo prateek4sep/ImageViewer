@@ -80,7 +80,7 @@ class Login extends Component {
                              <span className={this.state.invalidLoginLabel}>Incorrect username and/or password</span>
                         </FormHelperText>
                         <br />
-                        <Link to="/home"><Button variant="contained" color="primary" onClick={this.loginClickedHandler}>LOGIN</Button></Link>
+                        <Button variant="contained" color="primary" onClick={this.loginClickedHandler}>LOGIN</Button>
                     </CardContent>
                 </Card>
             </div>
