@@ -77,9 +77,9 @@ class Home extends Component {
                                             <div className='likes'>
                                                 {
                                                     this.state.likes[index] ?
-                                                        <FavoriteIcon fontSize='default' style={{ color: "red" }} />
+                                                        <FavoriteIcon fontSize='default' style={{ color: "red" }} onClick={() => this.likeHandler(index)} />
                                                         :
-                                                        <FavoriteBorderIcon fontSize='default' />
+                                                        <FavoriteBorderIcon fontSize='default' onClick={() => this.likeHandler(index)} />
                                                 }
                                                 <Typography>
                                                     <span>&nbsp;{this.state.likes[index] ? 2 + ' likes' : 1 + ' likes'}</span>
@@ -105,7 +105,7 @@ class Home extends Component {
                                                 </FormControl>
                                                 <div className='add-button'>
                                                     <FormControl>
-                                                        <Button variant='contained' color='primary'>ADD</Button>
+                                                        <Button variant='contained' color='primary' onClick={() => this.commentHandler(index)}>ADD</Button>
                                                     </FormControl>
                                                 </div>
                                             </div>
@@ -119,6 +119,30 @@ class Home extends Component {
             </div>
         );
     }
+
+    likeHandler = (index) => {
+        let likedImages = this.state.likes;
+        likedImages[index] = !likedImages[index];
+        this.setState({'likes': likedImages})
+    }
+
+    commentHandler = (index) => {
+        var textField = document.getElementById("textfield-" + index);
+        if (textField.value == null || textField.value.trim() === "") {
+            return;
+        }
+        let imageComments = this.state.comments;
+        if (imageComments[index] === undefined) {
+            imageComments[index] = [textField.value];
+        } else {
+            imageComments[index] = imageComments[index].concat([textField.value]);
+        }
+
+        textField.value = '';
+
+        this.setState({'comments': imageComments})
+    }
+
 }
 
 export default Home;
