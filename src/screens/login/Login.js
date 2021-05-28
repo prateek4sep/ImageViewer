@@ -4,8 +4,10 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import { Card, CardContent, Typography } from '@material-ui/core';
+import { Card, CardContent, Link, Typography } from '@material-ui/core';
 import './Login.css';
+import Home from '../../screens/home/Home';
+import ReactDOM from 'react-dom';
 
 class Login extends Component {
     constructor() {
@@ -15,7 +17,8 @@ class Login extends Component {
             password: "",
             usernameRequiredLabel: "hide",
             passwordRequiredLabel: "hide",
-            invalidLoginLabel: "hide"
+            invalidLoginLabel: "hide",
+            userLoggedIn: false
         }
     }
 
@@ -38,9 +41,10 @@ class Login extends Component {
         this.state.password === "" ? this.setState({passwordRequiredLabel:"red"}) : this.setState({passwordRequiredLabel:"hide"});
 
         if (this.state.username === mockUsername && this.state.password === mockPassword) {
-            sessionStorage.setItem("access-token", accessToken);
+            window.sessionStorage.setItem("access-token", accessToken);
             this.setState({invalidLoginLabel:"hide"});
-            console.log("Valid Login");
+            this.setState({userLoggedIn:true});
+            this.props.history.push('/home');
         } else {
             if(this.state.username !== "" && this.state.password !== "")
                 this.setState({invalidLoginLabel:"red"});
@@ -75,7 +79,7 @@ class Login extends Component {
                              <span className={this.state.invalidLoginLabel}>Incorrect username and/or password</span>
                         </FormHelperText>
                         <br />
-                        <Button variant="contained" color="primary" onClick={this.loginClickedHandler}>LOGIN</Button>
+                        <Link to="/home"><Button variant="contained" color="primary" onClick={this.loginClickedHandler}>LOGIN</Button></Link>
                     </CardContent>
                 </Card>
             </div>
