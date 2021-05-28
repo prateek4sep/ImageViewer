@@ -6,8 +6,6 @@ import Input from '@material-ui/core/Input';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
 import './Login.css';
-import Home from '../../screens/home/Home';
-import ReactDOM from 'react-dom';
 import Header from '../../common/Header';
 import { withRouter } from 'react-router-dom';
 
@@ -37,7 +35,7 @@ class Login extends Component {
     loginClickedHandler = () => {
         let mockUsername = "upgrad";
         let mockPassword = "upgrad";
-        let accessToken = "Valid Access Token";
+        let accessToken = "IGQVJYeE10eEU1Vm9CTGlsbmNrMEw1QUtVTFRmcGZA2UjZAMYWJhNjZADRVREWDNINThVRzZAjNF9zVWlVYkcyQXNCamZAwRTMtU3pDNUl4VG5fV3hkM0ZAOTENuTEI4NVIyRGwyeDJjbGQ1cHZAxZA3h3ME5BRwZDZD";
 
         this.state.username === "" ? this.setState({usernameRequiredLabel:"red"}) : this.setState({usernameRequiredLabel:"hide"});
         this.state.password === "" ? this.setState({passwordRequiredLabel:"red"}) : this.setState({passwordRequiredLabel:"hide"});
