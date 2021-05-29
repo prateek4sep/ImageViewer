@@ -22,7 +22,9 @@ class Home extends Component {
     constructor() {
         super();
         this.state = {
+            searchText: "",
             userImages: [{}],
+            filteredImages: [{}],
             id: "18226545019007944",
             url: "https://scontent-iad3-1.cdninstagram.com/v/t51.29350-15/192178301_773030510062147_6420479614626111894_n.jpg?_nc_cat=101&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=OG9F6vUS-LoAX-9jme2&_nc_ht=scontent-iad3-1.cdninstagram.com&oh=1ac53e5a4b52f29a34a7b8b2dfa07137&oe=60B612B6",
             username: "prateekmehta.dsd19",
@@ -45,13 +47,13 @@ class Home extends Component {
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
                 that.setState({userImages:JSON.parse(this.responseText).data});
+                that.setState({filteredImages:JSON.parse(this.responseText).data});
             }
         });
 
         let url = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
         xhr.open("GET", url);
         xhr.send(data);
-        console.log(this.state.userImages);
     }
 
     likeHandler = (index) => {
@@ -77,18 +79,35 @@ class Home extends Component {
         this.setState({'comments': imageComments})
     }
 
+    searchHandler = (e) => {
+        if (this.state.searchText == null || this.state.searchText.trim() === "") {
+            this.setState({filteredImages: this.state.userImages});
+        } else {
+            let filteredForSearch = this.state.userImages.filter((element) => {
+                return element.caption !== undefined && (element.caption.toUpperCase().split("\n")[0].indexOf(e.target.value.toUpperCase())) > -1
+            });
+            this.setState({filteredImages: filteredForSearch});
+        }
+    }
+
+    handleChange = (e) => {
+        this.setState({'searchText': e.target.value}, () => {
+            this.searchHandler(e);
+        });
+    };
+
     render() {
         if(this.state.loggedIn===false) return <Redirect to="/" />
         else
         return (
             <div>
                 <div>
-                    <Header {...this.props} loggedIn={true} dpUrl={this.state.url} showMyAccount={true} />
+                    <Header {...this.props} loggedIn={true} dpUrl={this.state.url} showMyAccount={true} handleChange={this.handleChange} />
                     </div>
                     <Container className='posts-container'>
                     <Grid container alignContent='center' justify='flex-start' direction='row' spacing={2}>
                         {
-                            (this.state.userImages || []).map((details, index) => (
+                            (this.state.filteredImages || []).map((details, index) => (
                                 <Grid item xs={6} key={details.id+"_img"}>
                                     <Card key={details.id}>
                                         <CardHeader
