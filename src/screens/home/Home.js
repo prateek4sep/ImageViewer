@@ -23,38 +23,39 @@ class Home extends Component {
         super();
         this.state = {
             searchText: "",
-            userImages: [{}],
-            filteredImages: [{}],
+            userImages: [],
+            filteredImages: [],
             id: "18226545019007944",
-            url: "https://scontent-iad3-1.cdninstagram.com/v/t51.29350-15/192178301_773030510062147_6420479614626111894_n.jpg?_nc_cat=101&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=OG9F6vUS-LoAX-9jme2&_nc_ht=scontent-iad3-1.cdninstagram.com&oh=1ac53e5a4b52f29a34a7b8b2dfa07137&oe=60B612B6",
             username: "prateekmehta.dsd19",
-            timestamp: "2021-05-26T16:01:50+0000",
-            tags: "#upgrad #upgradproject #reactjs",
             likes: [],
-            comments: [],
+            url: "https://scontent-iad3-1.cdninstagram.com/v/t51.29350-15/192178301_773030510062147_6420479614626111894_n.jpg?_nc_cat=101&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=OG9F6vUS-LoAX-9jme2&_nc_ht=scontent-iad3-1.cdninstagram.com&oh=1ac53e5a4b52f29a34a7b8b2dfa07137&oe=60B612B6",
             loggedIn: sessionStorage.getItem("access-token") == null ? false : true
         }
     }
 
-    componentDidMount() {
-        this.getUserImages();
-    }
+    async componentDidMount() {
+            let getUserImages = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
+            let getPostDetails = this.props.baseUrl + "$postId" + "?fields=id,media_type,media_url,username,timestamp&access_token=" + sessionStorage.getItem("access-token");
 
-    getUserImages = () => {
-        let data = null;
-        let xhr = new XMLHttpRequest();
-        let that = this;
-        xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4) {
-                that.setState({userImages:JSON.parse(this.responseText).data});
-                that.setState({filteredImages:JSON.parse(this.responseText).data});
+            let response = await fetch(getUserImages);
+            let posts = await response.json();
+            posts = posts.data;
+
+            for (let i = 0; i < posts.length; i++) {
+                response = await fetch(getPostDetails.replace('$postId', posts[i].id));
+                let details = await response.json();
+                posts[i].url = details.media_url;
+                posts[i].username = details.username;
+                posts[i].timestamp = details.timestamp;
+                posts[i].comments = [];
+                posts[i].tags = "#upgrad #upgradproject #reactjs";
+                posts[i].likes = Math.round(Math.random() * 100);
             }
-        });
-
-        let url = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
-        xhr.open("GET", url);
-        xhr.send(data);
+            this.setState({ userImages: posts });
+            this.setState({ filteredImages: posts.filter(x => true) });
+            console.log(this.state.userImages);
     }
+
 
     likeHandler = (index) => {
         let likedImages = this.state.likes;
@@ -67,7 +68,7 @@ class Home extends Component {
         if (textField.value == null || textField.value.trim() === "") {
             return;
         }
-        let imageComments = this.state.comments;
+        let imageComments = this.state.userImages[index].comments;
         if (imageComments[index] === undefined) {
             imageComments[index] = [textField.value];
         } else {
@@ -112,13 +113,13 @@ class Home extends Component {
                                     <Card key={details.id}>
                                         <CardHeader
                                             avatar={<Avatar variant="circle" src={this.state.url} className='avatar' />}
-                                            title={this.state.username}
-                                            subheader={new Date(this.state.timestamp).toLocaleString().replace(",","")} />
-                                        <CardMedia style={{ height: 0, paddingTop: '80%', marginBottom: 10 }} image={this.state.url} />
+                                            title={details.username}
+                                            subheader={new Date(details.timestamp).toLocaleString().replace(",","")} />
+                                        <CardMedia style={{ height: 0, paddingTop: '80%', marginBottom: 10 }} image={details.url} />
                                         <Divider variant="middle" />
                                         <CardContent>
                                             <div className='caption'>{details.caption}</div>
-                                            <div className='tags'> {this.state.tags} </div>
+                                            <div className='tags'> {details.tags} </div>
                                             <br />
                                             <div className='likes'>
                                                 {
@@ -128,14 +129,14 @@ class Home extends Component {
                                                         <FavoriteBorderIcon fontSize='default' onClick={() => this.likeHandler(index)} />
                                                 }
                                                 <Typography>
-                                                    <span>&nbsp;{this.state.likes[index] ? 2 + ' likes' : 1 + ' likes'}</span>
+                                                    <span>&nbsp;{this.state.likes[index] ? (details.likes+1) + ' likes' : details.likes + ' likes'}</span>
                                                 </Typography>
                                             </div>
 
                                             <div id='comments-container'>
                                                 {
-                                                    this.state.comments[index] ?
-                                                        (this.state.comments)[index].map((comment, index) => (
+                                                    details.comments[index] ?
+                                                        (details.comments)[index].map((comment, index) => (
                                                             <p key={index}>
                                                                 <b>{this.state.username}</b> : {comment}
                                                             </p>
