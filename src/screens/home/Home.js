@@ -27,7 +27,6 @@ class Home extends Component {
             filteredImages: [],
             id: "18226545019007944",
             username: "prateekmehta.dsd19",
-            likes: [],
             url: "https://scontent-iad3-1.cdninstagram.com/v/t51.29350-15/192178301_773030510062147_6420479614626111894_n.jpg?_nc_cat=101&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=OG9F6vUS-LoAX-9jme2&_nc_ht=scontent-iad3-1.cdninstagram.com&oh=1ac53e5a4b52f29a34a7b8b2dfa07137&oe=60B612B6",
             loggedIn: sessionStorage.getItem("access-token") == null ? false : true
         }
@@ -50,6 +49,7 @@ class Home extends Component {
                 posts[i].comments = [];
                 posts[i].tags = "#upgrad #upgradproject #reactjs";
                 posts[i].likes = Math.round(Math.random() * 100);
+                posts[i].isLiked = false;
             }
             this.setState({ userImages: posts });
             this.setState({ filteredImages: posts.filter(x => true) });
@@ -58,9 +58,9 @@ class Home extends Component {
 
 
     likeHandler = (index) => {
-        let likedImages = this.state.likes;
-        likedImages[index] = !likedImages[index];
-        this.setState({'likes': likedImages})
+        let likedImages = this.state.userImages;
+        likedImages[index].isLiked = !likedImages[index].isLiked;
+        this.setState({'userImages': likedImages})
     }
 
     commentHandler = (index) => {
@@ -123,13 +123,13 @@ class Home extends Component {
                                             <br />
                                             <div className='likes'>
                                                 {
-                                                    this.state.likes[index] ?
+                                                    details.isLiked ?
                                                         <FavoriteIcon fontSize='default' style={{ color: "red" }} onClick={() => this.likeHandler(index)} />
                                                         :
                                                         <FavoriteBorderIcon fontSize='default' onClick={() => this.likeHandler(index)} />
                                                 }
                                                 <Typography>
-                                                    <span>&nbsp;{this.state.likes[index] ? (details.likes+1) + ' likes' : details.likes + ' likes'}</span>
+                                                    <span>&nbsp;{details.isLiked ? (details.likes+1) + ' likes' : details.likes + ' likes'}</span>
                                                 </Typography>
                                             </div>
 
