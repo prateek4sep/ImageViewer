@@ -103,7 +103,7 @@ class Home extends Component {
         return (
             <div>
                 <div>
-                    <Header {...this.props} loggedIn={true} dpUrl={this.state.url} showMyAccount={true} handleChange={this.handleChange} />
+                    <Header {...this.props} loggedIn={true} dpUrl={this.state.url} showMyAccount={true} showSearch={true} handleChange={this.handleChange} />
                     </div>
                     <Container className='posts-container'>
                     <Grid container alignContent='center' justify='flex-start' direction='row' spacing={2}>
