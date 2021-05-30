@@ -35,7 +35,11 @@ class Profile extends Component {
             following: Math.round(Math.random() * 100),
             nameEditModalOpen: false,
             nameEditModalClose: true,
-            nameRequireLabel: "hide"
+            nameRequireLabel: "hide",
+            imageDetailsModalOpen: false,
+            imageDetailsModalClose: true,
+            imageSelectedForDetails: null,
+            indexOfImageSelectedForDetails: null
         }
     }
 
@@ -71,6 +75,20 @@ class Profile extends Component {
     closeEditNameModalHandler = () => {
         this.setState({nameEditModalOpen: false, nameEditModalClose: true})
     }
+
+    imageForDetailsClickHandler = (image, index) => {
+        this.setState({imageSelectedForDetails: image, indexOfImageSelectedForDetails: index})
+        this.openImageDetailsModalHandler()
+    }
+
+    openImageDetailsModalHandler = () => {
+        this.setState({imageDetailsModalOpen: true, imageDetailsModalClose: false})
+    }
+
+    closeImageDetailsModalHandler = () => {
+        this.setState({imageDetailsModalOpen: false, imageDetailsModalClose: true})
+    }
+
 
     async componentDidMount() {
         let getUserImages = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
@@ -155,11 +173,7 @@ class Profile extends Component {
                         <Grid container spacing={0} direction="row" alignItems="center">
                             {this.state.userImages &&
                                 this.state.userImages.map((details, index) => (
-                                    <Grid
-                                        item
-                                        xs={4}
-                                        key={details.id}
-                                        >
+                                    <Grid item xs={4} key={details.id} onClick={() => this.imageForDetailsClickHandler(details)} className="image-on-grid" >
                                         <Card variant="outlined">
                                             <CardMedia style={{ height: 0, paddingTop: '100%' }}
                                                 image={details.url} />
@@ -167,6 +181,19 @@ class Profile extends Component {
                                     </Grid>
                                 ))}
                         </Grid>
+                        <Modal open={this.state.imageDetailsModalOpen} onClose={this.closeImageDetailsModalHandler}>
+                        <div className="selected-image-modal">
+                            <Grid container spacing={2} direction="row" justify="center" alignItems='flex-start'>
+                                <Grid item xs={6}>
+                                    {this.state.imageSelectedForDetails ? (
+                                        <img alt={this.state.indexOfImageSelectedForDetails} src={this.state.imageSelectedForDetails.url}
+                                             style={{height: "100%",width: "100%"}}/>
+                                    ) : null}
+                                </Grid>
+                                
+                            </Grid>
+                        </div>
+                    </Modal>
                     </Container>
                 </div>
             )
