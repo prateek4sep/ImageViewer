@@ -15,8 +15,14 @@ import {
     Button,
     FormHelperText,
     Card,
-    CardMedia
+    CardMedia,
+    Divider,
+    CardActions,
+    IconButton,
+    TextField
 } from '@material-ui/core/';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import EditIcon from '@material-ui/icons/Edit';
 
 class Profile extends Component {
@@ -27,7 +33,6 @@ class Profile extends Component {
             id: "18226545019007944",
             username: "prateekmehta.dsd19",
             fullName: "Prateek Mehta",
-            likes: [],
             url: "https://scontent-iad3-1.cdninstagram.com/v/t51.29350-15/192178301_773030510062147_6420479614626111894_n.jpg?_nc_cat=101&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=OG9F6vUS-LoAX-9jme2&_nc_ht=scontent-iad3-1.cdninstagram.com&oh=1ac53e5a4b52f29a34a7b8b2dfa07137&oe=60B612B6",
             loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
             numPosts: Math.round(Math.random() * 100),
@@ -38,8 +43,8 @@ class Profile extends Component {
             nameRequireLabel: "hide",
             imageDetailsModalOpen: false,
             imageDetailsModalClose: true,
-            imageSelectedForDetails: null,
-            indexOfImageSelectedForDetails: null
+            imageSelected: null,
+            indexOfImageSelected: null
         }
     }
 
@@ -77,7 +82,7 @@ class Profile extends Component {
     }
 
     imageForDetailsClickHandler = (image, index) => {
-        this.setState({imageSelectedForDetails: image, indexOfImageSelectedForDetails: index})
+        this.setState({imageSelected: image, indexOfImageSelected: index})
         this.openImageDetailsModalHandler()
     }
 
@@ -89,6 +94,30 @@ class Profile extends Component {
         this.setState({imageDetailsModalOpen: false, imageDetailsModalClose: true})
     }
 
+    likeHandler = (index) => {
+        let likedImages = this.state.userImages;
+        likedImages[index].liked = !likedImages[index].liked;
+        this.setState({'userImages': likedImages})
+    }
+
+    addCommentHandler = () => {
+        let index = this.state.indexOfImageSelected;
+        var textbox = document.getElementById("add-user-comment");
+        if (textbox.value == null || textbox.value.trim() === "") {
+            return;
+        }
+        let userImagesTemp = this.state.userImages;
+        let c = userImagesTemp[index].comments;
+        if (c == null) {
+            c = textbox.value;
+        } else {
+            c = c.push([textbox.value]);
+        }
+        this.setState({
+            userImages: userImagesTemp,
+        })
+        textbox.value = '';
+    }
 
     async componentDidMount() {
         let getUserImages = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
@@ -107,6 +136,7 @@ class Profile extends Component {
             posts[i].comments = [];
             posts[i].tags = "#upgrad #upgradproject #reactjs";
             posts[i].likes = Math.round(Math.random() * 100);
+            posts[i].liked = false;
         }
         this.setState({ userImages: posts });
     }
@@ -173,7 +203,7 @@ class Profile extends Component {
                         <Grid container spacing={0} direction="row" alignItems="center">
                             {this.state.userImages &&
                                 this.state.userImages.map((details, index) => (
-                                    <Grid item xs={4} key={details.id} onClick={() => this.imageForDetailsClickHandler(details)} className="image-on-grid" >
+                                    <Grid item xs={4} key={details.id} onClick={() => this.imageForDetailsClickHandler(details, index)} className="image-on-grid" >
                                         <Card variant="outlined">
                                             <CardMedia style={{ height: 0, paddingTop: '100%' }}
                                                 image={details.url} />
@@ -185,12 +215,73 @@ class Profile extends Component {
                         <div className="selected-image-modal">
                             <Grid container spacing={2} direction="row" justify="center" alignItems='flex-start'>
                                 <Grid item xs={6}>
-                                    {this.state.imageSelectedForDetails ? (
-                                        <img alt={this.state.indexOfImageSelectedForDetails} src={this.state.imageSelectedForDetails.url}
+                                    {this.state.imageSelected ? (
+                                        <img alt={this.state.indexOfImageSelected} src={this.state.imageSelected.url}
                                              style={{height: "100%",width: "100%"}}/>
                                     ) : null}
                                 </Grid>
-                                
+                                <Grid item xs={6}>
+                                    {this.state.imageSelected ? (
+                                            <div className='right-section'>
+                                                <div>
+                                                    <Grid className="user-detail-section" container spacing={1}
+                                                          direction="row" style={{marginBottom:5}}>
+                                                        <Grid item xs={2} >
+                                                            <Avatar id='modal-profile-pic'
+                                                                    alt={this.state.fullName}
+                                                                    src={this.state.url}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={10}>
+                                                            <Typography style={{paddingTop: 20, paddingLeft: 0}}>
+                                                                {this.state.imageSelected.username}
+                                                            </Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Divider className='divider' variant="fullWidth"/>
+                                                    <Typography style={{marginTop:5}}>
+                                                        {this.state.imageSelected.caption != null ? this.state.imageSelected.caption.split("\n")[0] : null}
+                                                    </Typography>
+                                                    <Typography>
+                                                        <div className='tags'> {this.state.imageSelected.tags} </div>
+                                                    </Typography>
+                                                    <Typography component="div" className="comment-section">
+                                                        {
+                                                            this.state.userImages[this.state.indexOfImageSelected].comments &&
+                                                            this.state.userImages[this.state.indexOfImageSelected].comments.length > 0 &&
+                                                            this.state.userImages[this.state.indexOfImageSelected].comments.map(comment => {
+                                                                return (
+                                                                    <p style={{fontSize: 16}} key={comment}>
+                                                                    <b>{this.state.username}:</b> {comment}
+                                                                    </p>
+                                                                );
+                                                        })}
+                                                    </Typography>
+                                                </div>
+                                                <div className='lower-section'>
+                                                    <CardActions disableSpacing>
+                                                        <IconButton onClick={() => this.likeHandler(this.state.indexOfImageSelected)} edge='start'>
+                                                            {this.state.imageSelected.liked ?
+                                                                <FavoriteIcon style={{color: 'red'}}/>
+                                                                :
+                                                                <FavoriteBorderIcon/>}
+                                                        </IconButton>
+                                                        <span>{this.state.imageSelected.liked ? this.state.imageSelected.likes + 1 : this.state.imageSelected.likes} likes</span>
+                                                    </CardActions>
+                                                    <Grid className="comment-add-section" container spacing={3}
+                                                          alignItems='flex-end'>
+                                                        <Grid item xs={10}>
+                                                            <TextField id="add-user-comment" label="Add a comment" fullWidth={true}/>
+                                                        </Grid>
+                                                        <Grid item xs={2} className="add-button">
+                                                            <Button variant="contained" id="add-comments-button" color="primary" 
+                                                                onClick={() => this.addCommentHandler()} >Add</Button>
+                                                        </Grid>
+                                                    </Grid>
+                                                </div>
+                                            </div>
+                                    ) : null}
+                                </Grid>
                             </Grid>
                         </div>
                     </Modal>
