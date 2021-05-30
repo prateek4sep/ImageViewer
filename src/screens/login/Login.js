@@ -35,7 +35,7 @@ class Login extends Component {
     loginClickedHandler = () => {
         let mockUsername = "upgrad";
         let mockPassword = "upgrad";
-        let accessToken = "IGQVJXOXJyQkNadXpTWDg3emZAmZAnRibnlGM0dIYm5RVXRlUVoxWlFHaUplb2xjOEt4bzQtbC1ZAQ2NMeGtGVHluQ3BjSW1odnUzNjZAJc0ZAaX2ljLWNEZAG5zREV2S051VmJxV1Q3Y1RSSm9lcVVFTS0wUgZDZD";
+        let accessToken = "IGQVJWb05FcURJNVk5U0Y3Tm9OWXBOc1VIbDNQZA3BYUWlETzZAxOVNVa3c3TVo0ek1rdTkwc19DY3hZATjRtV1dEcEk1am52MnU3bEZAoTE12cDUwdzN2WE41TThSMnI0MFRfNkRra2VxOHdoRFRYM2V0TQZDZD";
 
         this.state.username === "" ? this.setState({usernameRequiredLabel:"red"}) : this.setState({usernameRequiredLabel:"hide"});
         this.state.password === "" ? this.setState({passwordRequiredLabel:"red"}) : this.setState({passwordRequiredLabel:"hide"});
