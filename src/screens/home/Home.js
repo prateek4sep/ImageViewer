@@ -49,7 +49,7 @@ class Home extends Component {
                 posts[i].comments = [];
                 posts[i].tags = "#upgrad #upgradproject #reactjs";
                 posts[i].likes = Math.round(Math.random() * 100);
-                posts[i].liked = false;
+                posts[i].isLiked = false;
             }
             this.setState({ userImages: posts });
             this.setState({ filteredImages: posts.filter(x => true) });
@@ -59,7 +59,7 @@ class Home extends Component {
 
     likeHandler = (index) => {
         let likedImages = this.state.userImages;
-        likedImages[index].liked = !likedImages[index].liked;
+        likedImages[index].isLiked = !likedImages[index].isLiked;
         this.setState({'userImages': likedImages})
     }
 
@@ -123,13 +123,13 @@ class Home extends Component {
                                             <br />
                                             <div className='likes'>
                                                 {
-                                                    details.liked ?
+                                                    details.isLiked ?
                                                         <FavoriteIcon fontSize='default' style={{ color: "red" }} onClick={() => this.likeHandler(index)} />
                                                         :
                                                         <FavoriteBorderIcon fontSize='default' onClick={() => this.likeHandler(index)} />
                                                 }
                                                 <Typography>
-                                                    <span>&nbsp;{details.liked ? (details.likes+1) + ' likes' : details.likes + ' likes'}</span>
+                                                    <span>&nbsp;{details.isLiked ? (details.likes+1) + ' likes' : details.likes + ' likes'}</span>
                                                 </Typography>
                                             </div>
 
