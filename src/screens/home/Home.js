@@ -43,6 +43,7 @@ class Home extends Component {
             for (let i = 0; i < posts.length; i++) {
                 response = await fetch(getPostDetails.replace('$postId', posts[i].id));
                 let details = await response.json();
+                posts[i].index = i;
                 posts[i].url = details.media_url;
                 posts[i].username = details.username;
                 posts[i].timestamp = details.timestamp;
@@ -57,27 +58,29 @@ class Home extends Component {
     }
 
 
-    likeHandler = (index) => {
+    likeHandler = (details) => {
+        let index = details.index;
         let likedImages = this.state.userImages;
         likedImages[index].isLiked = !likedImages[index].isLiked;
         this.setState({'userImages': likedImages})
     }
 
-    commentHandler = (index) => {
-        var textField = document.getElementById("textfield-" + index);
+    commentHandler = (details, pos) => {
+        let index = details.index;
+        var textField = document.getElementById("textfield-" + pos);
         if (textField.value == null || textField.value.trim() === "") {
             return;
         }
-        let imageComments = this.state.userImages[index].comments;
-        if (imageComments[index] === undefined) {
-            imageComments[index] = [textField.value];
+        let userImagesTemp = this.state.userImages;
+        if (userImagesTemp[index].comments == undefined) {
+            userImagesTemp[index].comments = [textField.value];
         } else {
-            imageComments[index] = imageComments[index].concat([textField.value]);
+            userImagesTemp[index].comments = userImagesTemp[index].comments.concat([textField.value]);
         }
 
         textField.value = '';
 
-        this.setState({'comments': imageComments})
+        this.setState({'userImages': userImagesTemp})
     }
 
     searchHandler = (e) => {
@@ -124,9 +127,9 @@ class Home extends Component {
                                             <div className='likes'>
                                                 {
                                                     details.isLiked ?
-                                                        <FavoriteIcon fontSize='default' style={{ color: "red" }} onClick={() => this.likeHandler(index)} />
+                                                        <FavoriteIcon fontSize='default' style={{ color: "red" }} onClick={() => this.likeHandler(details)} />
                                                         :
-                                                        <FavoriteBorderIcon fontSize='default' onClick={() => this.likeHandler(index)} />
+                                                        <FavoriteBorderIcon fontSize='default' onClick={() => this.likeHandler(details)} />
                                                 }
                                                 <Typography>
                                                     <span>&nbsp;{details.isLiked ? (details.likes+1) + ' likes' : details.likes + ' likes'}</span>
@@ -135,8 +138,8 @@ class Home extends Component {
 
                                             <div id='comments-container'>
                                                 {
-                                                    details.comments[index] ?
-                                                        (details.comments)[index].map((comment, index) => (
+                                                    details.comments ?
+                                                        details.comments.map((comment, index) => (
                                                             <p key={index}>
                                                                 <b>{this.state.username}</b> : {comment}
                                                             </p>
@@ -152,7 +155,7 @@ class Home extends Component {
                                                 </FormControl>
                                                 <div className='add-button'>
                                                     <FormControl>
-                                                        <Button variant='contained' color='primary' onClick={() => this.commentHandler(index)}>ADD</Button>
+                                                        <Button variant='contained' color='primary' onClick={() => this.commentHandler(details, index)}>ADD</Button>
                                                     </FormControl>
                                                 </div>
                                             </div>
