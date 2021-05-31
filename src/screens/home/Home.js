@@ -17,6 +17,7 @@ import {
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Redirect } from 'react-router-dom';
+import { properties } from '../../Config';
 
 class Home extends Component {
     constructor() {
@@ -25,9 +26,8 @@ class Home extends Component {
             searchText: "",
             userImages: [],
             filteredImages: [],
-            id: "18226545019007944",
-            username: "prateekmehta.dsd19",
-            url: "https://scontent-iad3-1.cdninstagram.com/v/t51.29350-15/192178301_773030510062147_6420479614626111894_n.jpg?_nc_cat=101&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=OG9F6vUS-LoAX-9jme2&_nc_ht=scontent-iad3-1.cdninstagram.com&oh=1ac53e5a4b52f29a34a7b8b2dfa07137&oe=60B612B6",
+            username: properties.username,
+            url: properties.dpUrl,
             loggedIn: sessionStorage.getItem("access-token") == null ? false : true
         }
     }
@@ -54,7 +54,6 @@ class Home extends Component {
             }
             this.setState({ userImages: posts });
             this.setState({ filteredImages: posts.filter(x => true) });
-            console.log(this.state.userImages);
     }
 
 
