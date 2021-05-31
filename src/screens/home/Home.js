@@ -35,7 +35,7 @@ class Home extends Component {
     // Hook that gets invoked right after a React component has been mounted aka after the first render() lifecycle.
     async componentDidMount() {
             let getUserImages = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
-            let getPostDetails = this.props.baseUrl + "$postId" + "?fields=id,media_type,media_url,username,timestamp&access_token=" + sessionStorage.getItem("access-token");
+            let getPostDetails = this.props.baseUrl + "$postId?fields=id,media_type,media_url,username,timestamp&access_token=" + sessionStorage.getItem("access-token");
 
             let response = await fetch(getUserImages);
             let posts = await response.json();
@@ -74,7 +74,7 @@ class Home extends Component {
             return;
         }
         let userImagesTemp = this.state.userImages;
-        if (userImagesTemp[index].comments == undefined) {
+        if (userImagesTemp[index].comments === undefined) {
             userImagesTemp[index].comments = [textField.value];
         } else {
             userImagesTemp[index].comments = userImagesTemp[index].comments.concat([textField.value]);
