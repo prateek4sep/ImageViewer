@@ -1,4 +1,4 @@
-# Please refer Config.js file for changing accessToken and hard-coded profile picture if requried.
+### Please refer Config.js file for changing accessToken and hard-coded profile picture if requried.
 
 ## Login Credentials
 Username: upgrad
