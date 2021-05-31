@@ -130,7 +130,7 @@ class Profile extends Component {
     // Using PROMISE to first get the list of posts and then to download the corresponding images.
     async componentDidMount() {
         let getUserImages = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
-        let getPostDetails = this.props.baseUrl + "$postId" + "?fields=id,media_type,media_url,username,timestamp&access_token=" + sessionStorage.getItem("access-token");
+        let getPostDetails = this.props.baseUrl + "$postId?fields=id,media_type,media_url,username,timestamp&access_token=" + sessionStorage.getItem("access-token");
 
         let response = await fetch(getUserImages);
         let posts = await response.json();
