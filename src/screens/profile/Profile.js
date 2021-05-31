@@ -31,16 +31,16 @@ class Profile extends Component {
         super();
         this.state = {
             userImages: [],
-            username: properties.username,
-            fullName: properties.fullName,
-            url: properties.dpUrl,
+            username: properties.username, // Reading hard-coded username from config file.
+            fullName: properties.fullName, // Reading hard-coded name from config file.
+            url: properties.dpUrl, // Reading hard-coded profile picture URL from config file.
             loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
             numPosts: Math.round(Math.random() * 100),
             followedBy: Math.round(Math.random() * 100),
             following: Math.round(Math.random() * 100),
             nameEditModalOpen: false,
             nameEditModalClose: true,
-            nameRequireLabel: "hide",
+            nameRequiredLabel: "hide",
             imageDetailsModalOpen: false,
             imageDetailsModalClose: true,
             imageSelected: null,
@@ -59,13 +59,13 @@ class Profile extends Component {
     editNameUpdateButtonHandler = () => {
         if (this.state.newFullName == null || this.state.newFullName.trim() === "") {
             this.setState({
-                nameRequireLabel: "show"
+                nameRequiredLabel: "show"
             })
         } else {
             this.setState({
                 fullName: this.state.newFullName,
                 newFullName: '',
-                nameRequireLabel: "hide"
+                nameRequiredLabel: "hide"
             })
 
             this.closeEditNameModalHandler();
@@ -73,33 +73,40 @@ class Profile extends Component {
 
     }
 
+    // Set Flag to Open Name edit modal.
     openEditNameModalHandler = () => {
         this.setState({nameEditModalOpen: true, nameEditModalClose: false})
     }
 
+    // Set Flag to Close Name edit modal.
     closeEditNameModalHandler = () => {
         this.setState({nameEditModalOpen: false, nameEditModalClose: true})
     }
 
+    // On clicking any image, set selected image and index and call open modal handler.
     imageForDetailsClickHandler = (image, index) => {
         this.setState({imageSelected: image, indexOfImageSelected: index})
         this.openImageDetailsModalHandler()
     }
 
+    // Set Flag to Open Image details modal.
     openImageDetailsModalHandler = () => {
         this.setState({imageDetailsModalOpen: true, imageDetailsModalClose: false})
     }
 
+    // Set Flag to Close Image details modal.
     closeImageDetailsModalHandler = () => {
         this.setState({imageDetailsModalOpen: false, imageDetailsModalClose: true})
     }
 
+    // On clicking like button. Setting like for the logged in user.
     likeHandler = (index) => {
         let likedImages = this.state.userImages;
         likedImages[index].liked = !likedImages[index].liked;
         this.setState({'userImages': likedImages})
     }
 
+    // On clicking Add button. Adding newly added comment for the corresponding image.
     addCommentHandler = () => {
         let index = this.state.indexOfImageSelected;
         var textbox = document.getElementById("add-user-comment");
@@ -119,6 +126,8 @@ class Profile extends Component {
         textbox.value = '';
     }
 
+    // Hook that gets invoked right after a React component has been mounted aka after the first render() lifecycle.
+    // Using PROMISE to first get the list of posts and then to download the corresponding images.
     async componentDidMount() {
         let getUserImages = this.props.baseUrl + "me/media?fields=id,caption&access_token=" + sessionStorage.getItem("access-token");
         let getPostDetails = this.props.baseUrl + "$postId" + "?fields=id,media_type,media_url,username,timestamp&access_token=" + sessionStorage.getItem("access-token");
@@ -133,15 +142,16 @@ class Profile extends Component {
             posts[i].url = details.media_url;
             posts[i].username = details.username;
             posts[i].timestamp = details.timestamp;
-            posts[i].comments = [];
-            posts[i].tags = "#upgrad #upgradproject #reactjs";
+            posts[i].comments = []; // For adding new comments.
+            posts[i].tags = "#upgrad #upgradproject #reactjs"; // Reading hard-coded hashtags from config file.
             posts[i].likes = Math.round(Math.random() * 100);
-            posts[i].liked = false;
+            posts[i].liked = false; // Setting liked status for the current user.
         }
         this.setState({ userImages: posts });
     }
 
     render() {
+        // Redirect to login page if not logged in.
         if (this.state.loggedIn === false) return <Redirect to="/" />
         else
             return (
@@ -154,6 +164,8 @@ class Profile extends Component {
                             <Grid item xs={2} style={{ paddingTop: 25 }}>
                                 <Avatar alt='profile_pic' id="dp" variant="circle" src={this.state.url} style={{ marginTop: 10 }} />
                             </Grid>
+
+                            {/* User info section. */}
                             <Grid item xs={5} id='info-container'>
                                 <Typography variant="h4" component="h1" style={{ paddingBottom: 15 }}>
                                     {this.state.username}
@@ -176,6 +188,7 @@ class Profile extends Component {
                                     </Fab>
                                 </Typography>
 
+                                {/* Name Edit Modal. */}
                                 <Modal open={this.state.nameEditModalOpen} onClose={this.closeEditNameModalHandler} >
                                     <div className="edit-modal" >
                                         <Typography variant="h5" style={{ paddingBottom: 15 }}>
@@ -185,7 +198,7 @@ class Profile extends Component {
                                             <InputLabel htmlFor="fullName">Full Name</InputLabel>
                                             <Input id="fullName" type="text" onChange={this.editNameFieldChangeHandler} />
                                             <FormHelperText>
-                                                <span className={this.state.nameRequireLabel} style={{ color: "red" }}>required</span>
+                                                <span className={this.state.nameRequiredLabel} style={{ color: "red" }}>required</span>
                                             </FormHelperText>
                                         </FormControl>
                                         <div style={{ marginTop: 25 }}>
@@ -199,7 +212,11 @@ class Profile extends Component {
                             <Grid item xs={4} />
                         </Grid>
                     </Container>
+
+                    {/* Display image section. */}
                     <Container>
+
+                        {/* Displaying clickable images on a grid. */}
                         <Grid container spacing={0} direction="row" alignItems="center">
                             {this.state.userImages &&
                                 this.state.userImages.map((details, index) => (
@@ -211,19 +228,27 @@ class Profile extends Component {
                                     </Grid>
                                 ))}
                         </Grid>
+
+                        {/* Image Details Modal for the selected image. */}
                         <Modal open={this.state.imageDetailsModalOpen} onClose={this.closeImageDetailsModalHandler}>
                         <div className="selected-image-modal">
                             <Grid container spacing={2} direction="row" justify="center" alignItems='flex-start'>
+
+                                {/* Image on Modal. */}
                                 <Grid item xs={6}>
                                     {this.state.imageSelected ? (
                                         <img alt={this.state.indexOfImageSelected} src={this.state.imageSelected.url}
                                              style={{height: "100%",width: "100%"}}/>
                                     ) : null}
                                 </Grid>
+
+                                {/* Roght section of the Modal. */}
                                 <Grid item xs={6}>
                                     {this.state.imageSelected ? (
                                             <div className='right-section'>
                                                 <div>
+
+                                                    {/* User Details. */}
                                                     <Grid className="user-detail-section" container spacing={1}
                                                           direction="row" style={{marginBottom:5}}>
                                                         <Grid item xs={2} >
@@ -239,12 +264,16 @@ class Profile extends Component {
                                                         </Grid>
                                                     </Grid>
                                                     <Divider className='divider' variant="fullWidth"/>
+
+                                                    {/* Caption and Hashtags. */}
                                                     <Typography style={{marginTop:5}}>
                                                         {this.state.imageSelected.caption != null ? this.state.imageSelected.caption.split("\n")[0] : null}
                                                     </Typography>
                                                     <Typography>
                                                         <div className='tags'> {this.state.imageSelected.tags} </div>
                                                     </Typography>
+
+                                                    {/* Display comments section. */}
                                                     <Typography component="div" className="comment-section">
                                                         {
                                                             this.state.userImages[this.state.indexOfImageSelected].comments &&
@@ -258,7 +287,11 @@ class Profile extends Component {
                                                         })}
                                                     </Typography>
                                                 </div>
+
+                                                {/* Like and Add Comment section. */}
                                                 <div className='lower-section'>
+
+                                                    {/* Like Image section. */}
                                                     <CardActions disableSpacing>
                                                         <IconButton onClick={() => this.likeHandler(this.state.indexOfImageSelected)} edge='start'>
                                                             {this.state.imageSelected.liked ?
@@ -268,6 +301,8 @@ class Profile extends Component {
                                                         </IconButton>
                                                         <span>{this.state.imageSelected.liked ? this.state.imageSelected.likes + 1 : this.state.imageSelected.likes} likes</span>
                                                     </CardActions>
+                                                    
+                                                    {/* Add Comment section. */}
                                                     <Grid className="comment-add-section" container spacing={3}
                                                           alignItems='flex-end'>
                                                         <Grid item xs={10}>

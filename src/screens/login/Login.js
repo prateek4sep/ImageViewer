@@ -8,6 +8,7 @@ import { Card, CardContent, Typography } from '@material-ui/core';
 import './Login.css';
 import Header from '../../common/Header';
 import { Redirect } from 'react-router-dom';
+import { properties } from '../../Config';
 
 class Login extends Component {
     constructor() {
@@ -22,20 +23,23 @@ class Login extends Component {
         }
     }
 
+    // For changing username state value and setting Helper Text flag accordingly.
     usernameChangedHandler = (e) => {
         this.setState({invalidLoginLabel:"hide"});
         this.setState({username: e.target.value});
     }
 
+    // For password username state value and setting Helper Text flag accordingly.
     passwordChangedHandler = (e) => {
         this.setState({invalidLoginLabel:"hide"});
         this.setState({password: e.target.value});
     }
 
+    // Validating username and password entered and setting the access token.
     loginClickedHandler = () => {
         let mockUsername = "upgrad";
         let mockPassword = "upgrad";
-        let accessToken = "IGQVJXcHk2TjdfVk5reGZAYaGFJRUJkSDJTUFdYZAUFLWjRHRE5uZAUJ6cklaNXhJYVhJU2dlUVh6V2RMTW1Hcm5pVDJMWk1KS3UwMlMxa3hEZAW1WM2R4ZAGpBMk50ZAFU0RDFVMVI3UDJkRmcwRk1LdTlZATgZDZD";
+        let accessToken = properties.accessToken;
 
         this.state.username === "" ? this.setState({usernameRequiredLabel:"red"}) : this.setState({usernameRequiredLabel:"hide"});
         this.state.password === "" ? this.setState({passwordRequiredLabel:"red"}) : this.setState({passwordRequiredLabel:"hide"});
@@ -65,6 +69,7 @@ class Login extends Component {
                         <FormControl className="form-control" required>
                             <InputLabel htmlFor="username">Username</InputLabel>
                             <Input id="username" type="text" onChange={this.usernameChangedHandler} />
+                            {/* Helper Text is shown or hidden based on the flag. */}
                             <FormHelperText>
                                 <span className={this.state.usernameRequiredLabel}>required</span>
                             </FormHelperText>
@@ -73,11 +78,13 @@ class Login extends Component {
                         <FormControl className="form-control" required>
                             <InputLabel htmlFor="loginPassword">Password</InputLabel>
                             <Input id="loginPassword" type="password" onChange={this.passwordChangedHandler}  />
+                            {/* Helper Text is shown or hidden based on the flag. */}
                             <FormHelperText>
                                 <span className={this.state.passwordRequiredLabel}>required</span>
                             </FormHelperText>
                         </FormControl>
                         <br /><br />
+                        {/* Helper Text is shown or hidden based on the flag. */}
                         <FormHelperText>
                              <span className={this.state.invalidLoginLabel}>Incorrect username and/or password</span>
                         </FormHelperText>
